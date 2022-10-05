@@ -14,15 +14,15 @@ namespace Jwt.Services
             _repository = repository;
         }
 
-        public async Task<bool> LoginAsync(string username, string password)
+        public async Task<(bool authenticationSuccessful, string? role)> LoginAsync(string username, string password)
         {
             var account = await _repository.GetAccountAsync(username);
             if (account == null)
             {
-                return false;
+                return (false, null);
             }
 
-            return VerifyPasswordHash(password, account.PasswordHash, account.PasswordSalt);
+            return (VerifyPasswordHash(password, account.PasswordHash, account.PasswordSalt), account.Role);
         }
 
         public async Task<Account> SignupNewAccountAsync(string username, string password)
@@ -43,6 +43,7 @@ namespace Jwt.Services
                 Username = username,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
+                Role = "User"
             };
         }
 

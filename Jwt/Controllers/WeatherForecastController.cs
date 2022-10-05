@@ -1,6 +1,8 @@
+using Jwt.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Jwt.Controllers
 {
@@ -21,9 +23,11 @@ namespace Jwt.Controllers
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public IEnumerable<WeatherForecast> Get()
         {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == "sub");
+
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
@@ -31,6 +35,13 @@ namespace Jwt.Controllers
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+
+        [HttpGet("ApiKey")]
+        [ApiKeyAuth]
+        public IActionResult GetUsingApiKey()
+        {
+            return Ok("Call was successful");
         }
     }
 }

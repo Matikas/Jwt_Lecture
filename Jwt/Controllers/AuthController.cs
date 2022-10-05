@@ -30,14 +30,14 @@ namespace Jwt.Controllers
         [HttpPost("login")]
         public async Task<ActionResult> Login(LoginDto loginModel)
         {
-            var loginSuccess = await _authService.LoginAsync(loginModel.Username, loginModel.Password);
+            var (loginSuccess, role) = await _authService.LoginAsync(loginModel.Username, loginModel.Password);
 
             if (!loginSuccess)
             {
                 return BadRequest();
             }
 
-            return Ok(_jwtService.GetJwtToken(loginModel.Username));
+            return Ok(_jwtService.GetJwtToken(loginModel.Username, role));
         }
     }
 }

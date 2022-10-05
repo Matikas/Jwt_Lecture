@@ -13,11 +13,12 @@ namespace Jwt.Services
             _configuration = configuration;
         }
 
-        public string GetJwtToken(string username)
+        public string GetJwtToken(string username, string role)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, username)
+                new Claim(ClaimTypes.Name, username),
+                new Claim(ClaimTypes.Role, role)
             };
 
             var secret = _configuration.GetSection("Jwt:Key").Value;
